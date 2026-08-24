@@ -62,12 +62,12 @@ function showSuccess(message) {
 function renderRows(rows) {
   resultBody.innerHTML = rows.map((row, index) => `
     <tr>
-      <td>${index + 1}</td>
-      <td>${escapeHtml(row.code)}</td>
-      <td>${escapeHtml(row.productId || "—")}</td>
-      <td>${escapeHtml(row.batchName)}</td>
-      <td>${escapeHtml(row.expiryDate)}</td>
-      <td>${escapeHtml(row.combined)}</td>
+      <td data-label="No.">${index + 1}</td>
+      <td data-label="Kode">${escapeHtml(row.code)}</td>
+      <td data-label="ID produk">${escapeHtml(row.productId || "—")}</td>
+      <td data-label="Batch">${escapeHtml(row.batchName)}</td>
+      <td data-label="Tanggal">${escapeHtml(row.expiryDate)}</td>
+      <td data-label="URL lengkap">${escapeHtml(row.combined)}</td>
     </tr>
   `).join("");
   resultSummary.textContent = `${rows.length.toLocaleString("id-ID")} baris · ${rows[0].code} sampai ${rows.at(-1).code}`;
