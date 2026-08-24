@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Generator data kode verifikasi Lume Colors" />
+    <title>Lume Batch Generator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <div class="brand-mark" aria-hidden="true">L</div>
+        <div>
+          <p class="eyebrow">LUME COLORS · INTERNAL TOOL</p>
+          <h1>Batch Generator</h1>
+          <p class="subtitle">Buat rangkaian kode verifikasi dan data batch dalam hitungan detik.</p>
+        </div>
+      </header>
+
+      <section class="card input-card" aria-labelledby="form-title">
+        <div class="section-heading">
+          <div>
+            <p class="step">01 · INPUT DATA</p>
+            <h2 id="form-title">Detail generator</h2>
+          </div>
+          <button id="resetButton" class="button button-ghost" type="button">Reset</button>
+        </div>
+
+        <form id="generatorForm" novalidate>
+          <div class="field field-wide">
+            <label for="startCode">URL atau kode awal <span>*</span></label>
+            <input
+              id="startCode"
+              name="startCode"
+              type="text"
+              autocomplete="off"
+              placeholder="http://verify.lumecolors.co.id/Genuine/scan/CWD002.02-MARET-2029.07500"
+              required
+            />
+            <small>Boleh berupa URL lengkap atau kode setelah bagian <code>/scan/</code>.</small>
+          </div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label for="amount">Jumlah data <span>*</span></label>
+              <input id="amount" name="amount" type="number" min="1" max="100000" value="5" required />
+              <small>Kode awal dihitung sebagai baris pertama.</small>
+            </div>
+
+            <div class="field">
+              <label for="productId">ID produk <em>Opsional</em></label>
+              <input id="productId" name="productId" type="text" autocomplete="off" placeholder="Contoh: 32" />
+              <small>Jika kosong, kolom kedua tetap tersedia.</small>
+            </div>
+
+            <div class="field">
+              <label for="batchName">Nama batch <span>*</span></label>
+              <input id="batchName" name="batchName" type="text" autocomplete="off" placeholder="Contoh: 25E25KITA" required />
+            </div>
+
+            <div class="field">
+              <label for="expiryDate">Tanggal <span>*</span></label>
+              <input id="expiryDate" name="expiryDate" type="date" required />
+              <small>Diisi manual dan disimpan sebagai YYYY-MM-DD.</small>
+            </div>
+          </div>
+
+          <div id="formError" class="message error-message" role="alert" hidden></div>
+          <button class="button button-primary" type="submit">
+            Generate data
+            <span aria-hidden="true">→</span>
+          </button>
+        </form>
+      </section>
+
+      <section id="resultSection" class="card result-card" aria-labelledby="result-title" hidden>
+        <div class="section-heading result-heading">
+          <div>
+            <p class="step">02 · HASIL</p>
+            <h2 id="result-title">Data siap digunakan</h2>
+            <p id="resultSummary" class="result-summary"></p>
+          </div>
+          <div class="actions">
+            <button id="copyButton" class="button button-secondary" type="button">Salin semua</button>
+            <button id="csvButton" class="button button-secondary" type="button">Unduh CSV</button>
+            <button id="txtButton" class="button button-secondary" type="button">Unduh TXT</button>
+          </div>
+        </div>
+
+        <div id="successMessage" class="message success-message" role="status" hidden></div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Kode</th>
+                <th>ID produk</th>
+                <th>Batch</th>
+                <th>Tanggal</th>
+                <th>URL hasil lengkap</th>
+              </tr>
+            </thead>
+            <tbody id="resultBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer>Dibuat untuk alur data Lume Colors</footer>
+    <script src="app.js"></script>
+  </body>
+</html>
