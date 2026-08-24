@@ -8,6 +8,10 @@ const formError = document.querySelector("#formError");
 const successMessage = document.querySelector("#successMessage");
 let generatedRows = [];
 const VERIFY_BASE_URL = "http://verify.lumecolors.co.id/Genuine/scan/";
+const HISTORY_KEY = "lumeBatchGenerator.history.v2";
+const OLD_HISTORY_KEY = "lumeBatchGenerator.lastInput.v1";
+let histories = {};
+let activePrefix = "";
 
 function extractCode(value) {
   const trimmed = value.trim().replace(/\/+$/, "");
@@ -37,6 +41,74 @@ function makeRows({ code, amount, productId, batchName, expiryDate }) {
       combined: `${VERIFY_BASE_URL}${generatedCode}`,
     };
   });
+}
+
+function getNextCode(code) {
+  const { prefix, start, width } = splitSequence(code);
+  return `${prefix}${(start + 1n).toString().padStart(width, "0")}`;
+}
+
+function getCodePrefix(code) {
+  return extractCode(code).split(".")[0].trim().toUpperCase();
+}
+
+function renderHistory(selectedPrefix = activePrefix) {
+  const section = document.querySelector("#lastInputSection");
+  const entries = Object.entries(histories).sort((a, b) => b[1].savedAt.localeCompare(a[1].savedAt));
+  if (!entries.length) {
+    section.hidden = true;
+    return;
+  }
+  section.hidden = false;
+  const history = histories[selectedPrefix];
+  const active = document.querySelector("#activeHistory");
+  active.hidden = !history;
+  if (history) {
+    activePrefix = selectedPrefix;
+    document.querySelector("#history-title").textContent = `Riwayat ${selectedPrefix}`;
+    document.querySelector("#lastStartCode").textContent = history.startCode;
+    document.querySelector("#lastEndCode").textContent = history.endCode;
+    document.querySelector("#nextCode").textContent = history.nextCode;
+  }
+  document.querySelector("#historyList").innerHTML = entries.map(([prefix, item]) => `
+    <article class="history-item">
+      <div><strong>${escapeHtml(prefix)}</strong><small>Terakhir: ${escapeHtml(item.endCode)}</small><small>Berikutnya: ${escapeHtml(item.nextCode)}</small></div>
+      <div class="history-item-actions">
+        <button class="history-mini-button" type="button" data-use-history="${escapeHtml(prefix)}">Gunakan</button>
+        <button class="history-mini-button delete" type="button" data-delete-history="${escapeHtml(prefix)}" aria-label="Hapus riwayat ${escapeHtml(prefix)}">×</button>
+      </div>
+    </article>`).join("");
+}
+
+function saveHistory(rows) {
+  const endCode = rows.at(-1).code;
+  const prefix = getCodePrefix(rows[0].code);
+  histories[prefix] = { startCode: rows[0].code, endCode, nextCode: getNextCode(endCode), savedAt: new Date().toISOString() };
+  activePrefix = prefix;
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(histories));
+  } catch {
+    // Hasil tetap dapat dibuat jika penyimpanan browser sedang dibatasi.
+  }
+  renderHistory(prefix);
+}
+
+function loadHistory() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(HISTORY_KEY));
+    if (stored && typeof stored === "object") histories = stored;
+    const old = JSON.parse(localStorage.getItem(OLD_HISTORY_KEY));
+    if (!Object.keys(histories).length && old?.startCode && old?.nextCode) {
+      const prefix = getCodePrefix(old.startCode);
+      histories[prefix] = old;
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(histories));
+    }
+  } catch {
+    histories = {};
+  }
+  const latest = Object.entries(histories).sort((a, b) => b[1].savedAt.localeCompare(a[1].savedAt))[0];
+  activePrefix = latest?.[0] || "";
+  renderHistory(activePrefix);
 }
 
 function escapeHtml(value) {
@@ -98,10 +170,56 @@ form.addEventListener("submit", (event) => {
       batchName,
       expiryDate,
     });
+    saveHistory(generatedRows);
     renderRows(generatedRows);
   } catch (error) {
     showError(error.message);
   }
+});
+
+document.querySelector("#useNextButton").addEventListener("click", () => {
+  const history = histories[activePrefix];
+  if (!history) return;
+  form.startCode.value = `${VERIFY_BASE_URL}${history.nextCode}`;
+  form.startCode.focus();
+  window.scrollTo({ top: form.offsetTop - 90, behavior: "smooth" });
+});
+
+form.startCode.addEventListener("input", () => {
+  const prefix = getCodePrefix(form.startCode.value);
+  if (prefix && histories[prefix]) activePrefix = prefix;
+  renderHistory(histories[prefix] ? prefix : "");
+});
+
+document.querySelector("#historyList").addEventListener("click", (event) => {
+  const useButton = event.target.closest("[data-use-history]");
+  const deleteButton = event.target.closest("[data-delete-history]");
+  if (useButton) {
+    const prefix = useButton.dataset.useHistory;
+    activePrefix = prefix;
+    form.startCode.value = `${VERIFY_BASE_URL}${histories[prefix].nextCode}`;
+    renderHistory(prefix);
+    form.startCode.focus();
+    window.scrollTo({ top: form.offsetTop - 90, behavior: "smooth" });
+  }
+  if (deleteButton) {
+    const prefix = deleteButton.dataset.deleteHistory;
+    delete histories[prefix];
+    if (activePrefix === prefix) activePrefix = "";
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(histories)); } catch { /* Penyimpanan mungkin dibatasi browser. */ }
+    renderHistory(activePrefix);
+  }
+});
+
+document.querySelector("#clearAllHistoryButton").addEventListener("click", () => {
+  if (!window.confirm("Hapus seluruh riwayat kode dari browser ini?")) return;
+  histories = {};
+  activePrefix = "";
+  try {
+    localStorage.removeItem(HISTORY_KEY);
+    localStorage.removeItem(OLD_HISTORY_KEY);
+  } catch { /* Penyimpanan mungkin dibatasi browser. */ }
+  renderHistory("");
 });
 
 document.querySelector("#resetButton").addEventListener("click", () => {
@@ -153,3 +271,5 @@ document.querySelector("#txtButton").addEventListener("click", () => {
   downloadFile(content, `${safeFilePart(generatedRows[0].batchName)}.txt`, "text/plain;charset=utf-8");
   showSuccess("File TXT berhasil diunduh.");
 });
+
+loadHistory();

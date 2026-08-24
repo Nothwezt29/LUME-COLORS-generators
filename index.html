@@ -74,6 +74,25 @@
         </form>
       </section>
 
+      <section id="lastInputSection" class="card history-card" aria-labelledby="history-title" hidden>
+        <div id="activeHistory" class="history-content" hidden>
+          <div><p class="step">RIWAYAT TERPILIH</p><h2 id="history-title">Riwayat kode</h2></div>
+          <dl class="history-details">
+            <div><dt>Kode awal</dt><dd id="lastStartCode">—</dd></div>
+            <div><dt>Kode terakhir</dt><dd id="lastEndCode">—</dd></div>
+            <div><dt>Nomor berikutnya</dt><dd id="nextCode">—</dd></div>
+          </dl>
+          <div class="history-actions">
+            <button id="useNextButton" class="button button-primary history-button" type="button">Gunakan nomor berikutnya →</button>
+          </div>
+        </div>
+        <div class="history-list-heading">
+          <div><p class="step">SEMUA RIWAYAT</p><h2>Kode yang pernah digunakan</h2></div>
+          <button id="clearAllHistoryButton" class="button button-ghost" type="button">Hapus semua</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </section>
+
       <section id="resultSection" class="card result-card" aria-labelledby="result-title" hidden>
         <div class="section-heading result-heading">
           <div>
