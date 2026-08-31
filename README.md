@@ -39,3 +39,5 @@ Buka `bundling.html` atau pilih **Bundling Produk** pada navbar. Halaman ini mem
 - **Detail Batch** — kode lengkap, kode produk, batch, nomor urut, nama batch, ID produk, tanggal, dan data gabungan.
 
 Pada halaman bundling, Sheet 2 memakai batch terbaru dan tanggal kedaluwarsa masing-masing produk. Kolom override dapat dipakai untuk mengganti nama batch seluruh produk; jika produk belum memiliki data batch, kode bundling menjadi fallback.
+
+Kolom **Jumlah data** menentukan jumlah set yang dibuat. Setiap set menaikkan nomor urut dan berisi satu kode bundling utama beserta seluruh produk yang dipilih. Total hasil dibatasi 100.000 baris.

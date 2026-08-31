@@ -57,22 +57,28 @@ function showSuccess(message) { $("#bundleSuccess").textContent = message; $("#b
 
 $("#bundleForm").addEventListener("submit", (event) => {
   event.preventDefault(); $("#bundleError").hidden = true;
-  const title = $("#bundleTitle").value.trim(), bundleCode = $("#bundleCode").value.trim().toUpperCase(), customBatchName = $("#bundleBatchName").value.trim(), date = $("#bundleDate").value, sequence = $("#bundleSequence").value.trim();
+  const title = $("#bundleTitle").value.trim(), bundleCode = $("#bundleCode").value.trim().toUpperCase(), customBatchName = $("#bundleBatchName").value.trim(), date = $("#bundleDate").value, sequence = $("#bundleSequence").value.trim(), amount = Number($("#bundleAmount").value);
   if (!title || !bundleCode || !date || !sequence) return showError("Lengkapi judul, kode bundling, tanggal, dan nomor awal.");
   if (!/^[A-Z0-9]+(?:-[A-Z0-9]+)*$/.test(bundleCode)) return showError("Kode bundling hanya boleh berisi huruf, angka, dan tanda hubung.");
   if (!/^\d+$/.test(sequence)) return showError("Nomor awal harus berupa angka. Nol di depan akan dipertahankan.");
   if (!selected.length) return showError("Pilih minimal satu produk untuk bundling.");
+  if (!Number.isInteger(amount) || amount < 1 || amount > 100000) return showError("Jumlah data harus antara 1 sampai 100.000.");
+  if (amount * (selected.length + 1) > 100000) return showError("Total hasil maksimal 100.000 baris. Kurangi jumlah data atau produk.");
   const parentCode = bundleCode.replace(/-[^-]+$/, "");
-  resultRows = [
-    { name: bundleCode, url: `${VERIFY_URL}${parentCode}.${dateCode(date)}.${sequence}`, isBundle: true },
-    ...selected.map((product) => {
-      const fullCode = `${product.code}.${bundleCode}-${sequence}`;
-      const productBatch = (customBatchName || product.batch || bundleCode).replaceAll(",", " ");
-      const productDate = product.expiry || readableDate(date);
-      return { name: product.name, url: `${VERIFY_URL}${fullCode}`, isBundle: false, fullCode, productCode: product.code, batchCode: bundleCode, sequence, batchName: productBatch, productId: product.id, date: productDate, combined: `${fullCode},${product.id},${productBatch}` };
-    }),
-  ];
-  $("#bundleResultTitle").textContent = title; $("#bundleSummary").textContent = `${selected.length} produk · ${bundleCode}`; $("#previewTitle").textContent = title;
+  const start = BigInt(sequence), width = sequence.length;
+  resultRows = Array.from({ length: amount }, (_, index) => {
+    const currentSequence = (start + BigInt(index)).toString().padStart(width, "0");
+    return [
+      { name: bundleCode, url: `${VERIFY_URL}${parentCode}.${dateCode(date)}.${currentSequence}`, isBundle: true },
+      ...selected.map((product) => {
+        const fullCode = `${product.code}.${bundleCode}-${currentSequence}`;
+        const productBatch = (customBatchName || product.batch || bundleCode).replaceAll(",", " ");
+        const productDate = product.expiry || readableDate(date);
+        return { name: product.name, url: `${VERIFY_URL}${fullCode}`, isBundle: false, fullCode, productCode: product.code, batchCode: bundleCode, sequence: currentSequence, batchName: productBatch, productId: product.id, date: productDate, combined: `${fullCode},${product.id},${productBatch}` };
+      }),
+    ];
+  }).flat();
+  $("#bundleResultTitle").textContent = title; $("#bundleSummary").textContent = `${amount.toLocaleString("id-ID")} set · ${selected.length} produk · ${resultRows.length.toLocaleString("id-ID")} baris`; $("#previewTitle").textContent = title;
   $("#previewRows").innerHTML = resultRows.map((row) => `<div class="preview-row"><span>${escapeHtml(row.name)}</span><a href="${escapeHtml(row.url)}" target="_blank" rel="noreferrer">${escapeHtml(row.url)}</a></div>`).join("");
   $("#bundleResult").hidden = false; $("#bundleResult").scrollIntoView({ behavior: "smooth", block: "start" });
 });
