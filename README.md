@@ -1,31 +1,30 @@
-# Lume Batch Generator
+# Lume Batch Studio
 
-Aplikasi web lokal untuk membuat rangkaian kode verifikasi dan menggabungkannya dengan ID produk, nama batch, serta tanggal manual.
+Aplikasi web lokal untuk membuat kode verifikasi produk Lume Colors dan mengekspornya sebagai workbook Excel dua sheet.
 
 ## Menjalankan aplikasi
 
-Buka `index.html` langsung dengan browser modern seperti Chrome atau Edge. Tidak ada dependensi yang perlu diinstal.
+Buka `index.html` langsung menggunakan Chrome atau Edge. Aplikasi tidak memerlukan instalasi paket maupun backend.
 
-Alternatif jika ingin menjalankan melalui server lokal:
+## Alur penggunaan
 
-```powershell
-python -m http.server 8080
-```
+1. Cari dan pilih produk dari katalog.
+2. Masukkan kode awal, misalnya `CWD002.29-JUNI-2029.01501`.
+3. Isi jumlah data, ID produk, nama batch, dan tanggal.
+4. Pilih **Generate batch**.
+5. Salin URL QR atau unduh workbook Excel untuk input tersebut.
 
-Kemudian buka `http://localhost:8080`.
+Workbook berisi:
 
-## Format hasil
+- **QR Produk** — kolom `Produk` dan `QR`.
+- **Detail Batch** — rincian kode, kode produk, batch kode, nomor urut, nama batch, ID produk, tanggal, dan data gabungan.
 
-```text
-http://verify.lumecolors.co.id/Genuine/scan/KODE
-```
+## Batch dan riwayat
 
-ID produk, nama batch, dan tanggal tetap ditampilkan di tabel, tetapi tidak ditambahkan ke URL hasil.
+Setiap proses generate disimpan sebagai satu input tersendiri di browser. Produk yang sama dapat memiliki banyak batch maupun beberapa proses lanjutan tanpa menghapus catatan sebelumnya.
 
-```text
-http://verify.lumecolors.co.id/Genuine/scan/CWD002.02-MARET-2029.07500
-```
+- **Unduh Excel** pada kartu riwayat mengekspor satu input saja.
+- **Unduh semua** menggabungkan seluruh input yang pernah disimpan ke satu workbook dua sheet.
+- **Lanjut** mengisi nomor berikutnya dari input yang dipilih.
 
-## Riwayat input
-
-Aplikasi menyimpan kode awal, kode terakhir yang dihasilkan, dan nomor berikutnya secara terpisah untuk setiap kode depan, misalnya `CONCA02` dan `CWD002`. Ketika kode depan diketik, riwayat yang sesuai ditampilkan otomatis. Tombol **Gunakan nomor berikutnya** membantu melanjutkan urutan tanpa mengulang nomor.
+Katalog dalam `products.js` berasal dari `kode & nama produk.xlsx` dan saat ini memuat 150 produk.

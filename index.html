@@ -1,133 +1,54 @@
 <!doctype html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Generator data kode verifikasi Lume Colors" />
-    <title>Lume Batch Generator</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main class="shell">
-      <header class="hero">
-        <div class="brand-mark" aria-hidden="true">L</div>
-        <div>
-          <p class="eyebrow">LUME COLORS · INTERNAL TOOL</p>
-          <h1>Batch Generator</h1>
-          <p class="subtitle">Buat rangkaian kode verifikasi dan data batch dalam hitungan detik.</p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Generator batch dan QR produk Lume Colors" />
+  <title>Lume Batch Studio</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Lume Colors"><span class="brand-monogram">L</span><span><strong>LUME</strong><small>COLORS</small></span></a>
+      <span class="tool-label">Batch Studio <i></i> Internal Tool</span>
+    </header>
+    <section class="hero">
+      <div><p class="kicker">PRODUCT AUTHENTICATION</p><h1>Siapkan kode batch<br><em>tanpa kerumitan.</em></h1></div>
+      <p class="hero-copy">Pilih produk, tentukan batch, lalu hasilkan QR dan workbook Excel dua sheet yang siap dipakai.</p>
+    </section>
+    <section class="workspace">
+      <form id="generatorForm" class="panel form-panel" novalidate>
+        <div class="panel-heading"><span class="step-number">01</span><div><p class="overline">DETAIL PRODUK</p><h2>Buat batch baru</h2></div><button id="resetButton" class="text-button" type="button">Reset</button></div>
+        <div class="field full">
+          <label for="productSearch">Produk <span>*</span></label>
+          <div class="product-picker"><input id="productSearch" type="search" autocomplete="off" placeholder="Cari kode atau nama produk..." aria-controls="productOptions" /><input id="productCode" name="productCode" type="hidden" /><div id="productOptions" class="product-options" hidden></div></div>
+          <div id="selectedProduct" class="selected-product" hidden><span id="selectedCode"></span><strong id="selectedName"></strong><button id="changeProduct" type="button">Ganti</button></div>
+          <small>150 produk tersedia dari file kode &amp; nama produk. Ketik untuk mencari atau scroll daftar lengkap.</small>
         </div>
-      </header>
-
-      <section class="card input-card" aria-labelledby="form-title">
-        <div class="section-heading">
-          <div>
-            <p class="step">01 · INPUT DATA</p>
-            <h2 id="form-title">Detail generator</h2>
-          </div>
-          <button id="resetButton" class="button button-ghost" type="button">Reset</button>
+        <div class="form-grid">
+          <div class="field full"><label for="startCode">Kode awal <span>*</span></label><input id="startCode" name="startCode" type="text" autocomplete="off" placeholder="CWD002.29-JUNI-2029.01501" required /><small>Boleh berupa kode atau URL lengkap. Angka terakhir menjadi nomor urut.</small></div>
+          <div class="field"><label for="amount">Jumlah data <span>*</span></label><input id="amount" name="amount" type="number" min="1" max="100000" value="5" required /></div>
+          <div class="field"><label for="productId">ID produk <span>*</span></label><input id="productId" name="productId" type="text" inputmode="numeric" autocomplete="off" placeholder="Terisi otomatis" required /><small>Terisi dari katalog dan tetap dapat dikoreksi.</small></div>
+          <div class="field"><label for="batchName">Nama batch <span>*</span></label><input id="batchName" name="batchName" type="text" autocomplete="off" placeholder="Contoh: DDF3012" required /></div>
+          <div class="field"><label for="expiryDate">Tanggal <span>*</span></label><input id="expiryDate" name="expiryDate" type="date" required /></div>
         </div>
-
-        <form id="generatorForm" novalidate>
-          <div class="field field-wide">
-            <label for="startCode">URL atau kode awal <span>*</span></label>
-            <input
-              id="startCode"
-              name="startCode"
-              type="text"
-              autocomplete="off"
-              placeholder="http://verify.lumecolors.co.id/Genuine/scan/CWD002.02-MARET-2029.07500"
-              required
-            />
-            <small>Boleh berupa URL lengkap atau kode setelah bagian <code>/scan/</code>.</small>
-          </div>
-
-          <div class="form-grid">
-            <div class="field">
-              <label for="amount">Jumlah data <span>*</span></label>
-              <input id="amount" name="amount" type="number" min="1" max="100000" value="5" required />
-              <small>Kode awal dihitung sebagai baris pertama.</small>
-            </div>
-
-            <div class="field">
-              <label for="productId">ID produk <em>Opsional</em></label>
-              <input id="productId" name="productId" type="text" autocomplete="off" placeholder="Contoh: 32" />
-              <small>Jika kosong, kolom kedua tetap tersedia.</small>
-            </div>
-
-            <div class="field">
-              <label for="batchName">Nama batch <span>*</span></label>
-              <input id="batchName" name="batchName" type="text" autocomplete="off" placeholder="Contoh: 25E25KITA" required />
-            </div>
-
-            <div class="field">
-              <label for="expiryDate">Tanggal <span>*</span></label>
-              <input id="expiryDate" name="expiryDate" type="date" required />
-              <small>Diisi manual dan disimpan sebagai YYYY-MM-DD.</small>
-            </div>
-          </div>
-
-          <div id="formError" class="message error-message" role="alert" hidden></div>
-          <button class="button button-primary" type="submit">
-            Generate data
-            <span aria-hidden="true">→</span>
-          </button>
-        </form>
-      </section>
-
-      <section id="lastInputSection" class="card history-card" aria-labelledby="history-title" hidden>
-        <div id="activeHistory" class="history-content" hidden>
-          <div><p class="step">RIWAYAT TERPILIH</p><h2 id="history-title">Riwayat kode</h2></div>
-          <dl class="history-details">
-            <div><dt>Kode awal</dt><dd id="lastStartCode">—</dd></div>
-            <div><dt>Kode terakhir</dt><dd id="lastEndCode">—</dd></div>
-            <div><dt>Nomor berikutnya</dt><dd id="nextCode">—</dd></div>
-          </dl>
-          <div class="history-actions">
-            <button id="useNextButton" class="button button-primary history-button" type="button">Gunakan nomor berikutnya →</button>
-          </div>
-        </div>
-        <div class="history-list-heading">
-          <div><p class="step">SEMUA RIWAYAT</p><h2>Kode yang pernah digunakan</h2></div>
-          <button id="clearAllHistoryButton" class="button button-ghost" type="button">Hapus semua</button>
-        </div>
-        <div id="historyList" class="history-list"></div>
-      </section>
-
-      <section id="resultSection" class="card result-card" aria-labelledby="result-title" hidden>
-        <div class="section-heading result-heading">
-          <div>
-            <p class="step">02 · HASIL</p>
-            <h2 id="result-title">Data siap digunakan</h2>
-            <p id="resultSummary" class="result-summary"></p>
-          </div>
-          <div class="actions">
-            <button id="copyButton" class="button button-secondary" type="button">Salin semua</button>
-            <button id="csvButton" class="button button-secondary" type="button">Unduh CSV</button>
-            <button id="txtButton" class="button button-secondary" type="button">Unduh TXT</button>
-          </div>
-        </div>
-
-        <div id="successMessage" class="message success-message" role="status" hidden></div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>No.</th>
-                <th>Kode</th>
-                <th>ID produk</th>
-                <th>Batch</th>
-                <th>Tanggal</th>
-                <th>URL hasil lengkap</th>
-              </tr>
-            </thead>
-            <tbody id="resultBody"></tbody>
-          </table>
-        </div>
-      </section>
-    </main>
-
-    <footer>Dibuat untuk alur data Lume Colors</footer>
-    <script src="app.js"></script>
-  </body>
+        <div id="formError" class="message error-message" role="alert" hidden></div>
+        <button class="primary-button" type="submit"><span>Generate batch</span><b aria-hidden="true">&#8599;</b></button>
+      </form>
+      <aside id="historyPanel" class="panel history-panel">
+        <div class="panel-heading"><span class="step-number muted">&#8635;</span><div><p class="overline">RIWAYAT BATCH</p><h2>Lanjutkan pekerjaan</h2></div><div class="history-head-actions"><button id="downloadAllHistoryButton" class="text-button download-all" type="button" hidden>Unduh semua</button><button id="clearAllHistoryButton" class="text-button" type="button">Hapus semua</button></div></div>
+        <p id="emptyHistory" class="empty-state">Belum ada batch. Batch yang selesai dibuat akan muncul di sini.</p><div id="historyList" class="history-list"></div>
+      </aside>
+    </section>
+    <section id="resultSection" class="panel result-panel" hidden>
+      <div class="result-heading"><div class="panel-heading"><span class="step-number">02</span><div><p class="overline">HASIL GENERATOR</p><h2 id="resultTitle">Data siap digunakan</h2><p id="resultSummary" class="summary"></p></div></div><div class="actions"><button id="copyButton" class="secondary-button" type="button">Salin QR</button><button id="xlsxButton" class="primary-button compact" type="button">Unduh Excel <b>&#8595;</b></button></div></div>
+      <div id="successMessage" class="message success-message" role="status" hidden></div>
+      <div class="table-wrap"><table><thead><tr><th>No.</th><th>Produk</th><th>Kode</th><th>ID</th><th>Batch</th><th>Tanggal</th><th>QR / URL</th></tr></thead><tbody id="resultBody"></tbody></table></div>
+    </section>
+  </main>
+  <footer><span>LUME COLORS</span> &mdash; batch authentication workspace_DINDA LOVE IRSANDI</footer>
+  <script src="products.js"></script><script src="app.js"></script>
+</body>
 </html>
