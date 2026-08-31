@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Generator bundling beberapa produk Lume Colors" />
+  <title>Lume Bundling Studio</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="bundling.css" />
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="Lume Colors"><span class="brand-monogram">L</span><span><strong>LUME</strong><small>COLORS</small></span></a>
+      <nav class="main-nav" aria-label="Navigasi utama"><a href="index.html">Batch Generator</a><a class="active" href="bundling.html">Bundling Produk</a></nav>
+    </header>
+
+    <section class="hero bundle-hero">
+      <div><p class="kicker">MULTI-PRODUCT GENERATOR</p><h1>Susun satu bundling.<br><em>Semua varian.</em></h1></div>
+      <p class="hero-copy">Pilih beberapa produk, atur urutannya, lalu hasilkan daftar URL verifikasi dalam satu file Excel.</p>
+    </section>
+
+    <form id="bundleForm" novalidate>
+      <section class="bundle-layout">
+        <div class="panel bundle-setup">
+          <div class="panel-heading"><span class="step-number">01</span><div><p class="overline">IDENTITAS BUNDLING</p><h2>Informasi utama</h2></div></div>
+          <div class="bundle-form-grid">
+            <div class="field full"><label for="bundleTitle">Judul bundling <span>*</span></label><input id="bundleTitle" type="text" placeholder="Bundling All Variant Lumecolors - SEPTEMBER 2026 Tiers 1" required /></div>
+            <div class="field"><label for="bundleCode">Kode bundling <span>*</span></label><input id="bundleCode" type="text" placeholder="AVL1926-1" autocomplete="off" required /></div>
+            <div class="field"><label for="bundleBatchName">Override nama batch <small>Opsional</small></label><input id="bundleBatchName" type="text" placeholder="Kosongkan untuk batch produk" autocomplete="off" /><small>Jika diisi, mengganti batch otomatis untuk semua produk.</small></div>
+            <div class="field"><label for="bundleDate">Tanggal bundling <span>*</span></label><input id="bundleDate" type="date" required /></div>
+            <div class="field"><label for="bundleSequence">Nomor awal <span>*</span></label><input id="bundleSequence" type="text" inputmode="numeric" value="00001" maxlength="20" required /></div>
+          </div>
+        </div>
+
+        <div class="panel bundle-products-panel">
+          <div class="panel-heading"><span class="step-number">02</span><div><p class="overline">PILIH PRODUK</p><h2>Produk dalam bundling</h2></div><span id="selectedCount" class="count-badge">0 produk</span></div>
+          <div class="bundle-picker"><input id="bundleProductSearch" type="search" autocomplete="off" placeholder="Cari kode atau nama produk..." /><div id="bundleProductOptions" class="bundle-product-options" hidden></div></div>
+          <p id="emptySelection" class="empty-state compact-empty">Belum ada produk dipilih. Cari produk di atas, lalu klik untuk menambahkannya.</p>
+          <div id="selectedProducts" class="selected-products"></div>
+        </div>
+      </section>
+      <div id="bundleError" class="message error-message bundle-error" role="alert" hidden></div>
+      <button class="primary-button bundle-submit" type="submit"><span>Generate bundling</span><b>&#8599;</b></button>
+    </form>
+
+    <section id="bundleResult" class="panel result-panel bundle-result" hidden>
+      <div class="result-heading"><div class="panel-heading"><span class="step-number">03</span><div><p class="overline">HASIL BUNDLING</p><h2 id="bundleResultTitle">Data siap digunakan</h2><p id="bundleSummary" class="summary"></p></div></div><div class="actions"><button id="copyBundleButton" class="secondary-button" type="button">Salin semua</button><button id="downloadBundleButton" class="primary-button compact" type="button">Unduh Excel <b>&#8595;</b></button></div></div>
+      <div id="bundleSuccess" class="message success-message" role="status" hidden></div>
+      <div class="bundle-preview"><div id="previewTitle" class="preview-title"></div><div id="previewRows"></div></div>
+    </section>
+  </main>
+  <footer><span>LUME COLORS</span> &mdash; bundling workspace</footer>
+  <script src="products.js"></script><script src="bundling.js"></script>
+</body>
+</html>

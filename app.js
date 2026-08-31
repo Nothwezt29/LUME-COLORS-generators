@@ -32,6 +32,16 @@ function displayDate(value) {
   return new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "long", year: "numeric" }).format(new Date(year, month - 1, day));
 }
 
+function expiryInputValue(value) {
+  if (!value) return "";
+  const months = { januari:1,februari:2,maret:3,april:4,mei:5,juni:6,juli:7,agustus:8,september:9,oktober:10,november:11,desember:12,jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12 };
+  const parts = value.trim().toLowerCase().replaceAll("/", "-").split(/[-\s]+/);
+  if (parts.length < 3) return "";
+  const day = Number(parts[0]), month = /^\d+$/.test(parts[1]) ? Number(parts[1]) : months[parts[1]];
+  let year = Number(parts[2]); if (year < 100) year += 2000;
+  return day && month && year ? `${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}` : "";
+}
+
 function makeRows({ product, code, amount, productId, batchName, expiryDate }) {
   const parsed = splitCode(code);
   if (parsed.productCode !== product.code.toUpperCase()) throw new Error(`Kode awal harus memakai kode produk ${product.code}.`);
@@ -46,6 +56,8 @@ function showProduct(product) {
   selectedProduct = product;
   form.productCode.value = product.code;
   form.productId.value = product.id;
+  form.batchName.value = product.batch || "";
+  form.expiryDate.value = expiryInputValue(product.expiry);
   $("#productSearch").value = "";
   $("#productSearch").parentElement.hidden = true;
   $("#selectedCode").textContent = product.id !== "" ? `${product.code} · ID ${product.id}` : `${product.code} · ID belum tersedia`;
